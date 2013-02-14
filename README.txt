@@ -13,15 +13,8 @@ I. Get Started
 	a. Installing Nodejs & TTAPI
 	b. Bot Configuration
 	c. Running the Bot
-II. FAQ
-	a.
-	b.
-	c.
-	d.
-	e.
-	f.
-III. Notes
-IV. Contact
+II. Notes
+III. Contact
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -53,12 +46,8 @@ I. Get Started
 			node bot.js
 			
 		3. Easy as that!
-		
-II. FAQ
 
-
-
-III. Notes
+II. Notes
 
 	- I prefer using node-dev, a module you can download from the nodejs
 	repository. But a quicker way to do that is through your terminal:
@@ -69,3 +58,7 @@ III. Notes
 	source code at all. It's convienent, to say the least. And it's not 
 	only the bot.js it will watch for; if you edit config.js or any other
 	associated file, it will restart the bot for you.
+
+III. Contact
+	
+	Email: lokee@wubmag.com
