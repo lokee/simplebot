@@ -8,7 +8,7 @@
 */  
 
 exports.AdminId 		= '';
-exports.BotAuth 		= ''
+exports.BotAuth 		= '';
 exports.BotId 			= '';
 exports.BotRoom 		= '';
 exports.BotVersion 		= '0.9';
@@ -20,8 +20,3 @@ exports.DebugMode 		= false;	// Outputs information in console when enabled
 
 exports.hasLimit		= false;
 exports.PlayLimit		= 6;
-
-// Feel free to modify the welcome messages!
-
-exports.AdminWelcome 	= 'The room admin is in the house!';
-exports.UserWelcome		= 'Welcome, \@' + data.user[0].name + '!';
