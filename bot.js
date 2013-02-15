@@ -63,8 +63,8 @@ bot.on('registered', function (data) {
     case '':
       bot.bootUser(data.user[0].userid, 'You are a banned user in this room. If you have any questions please PM room owner.');
       if (Config.LogEvent) {
-		  console.log('[EVENT] ' + data.user[0].name + ' has been kicked \(banned user\).');
-	  }
+        console.log('[EVENT] ' + data.user[0].name + ' has been kicked \(banned user\).');
+      }
       break;
     default:
       bot.speak('Welcome, \@' + data.user[0].name + '!');
@@ -77,7 +77,7 @@ bot.on('add_dj', function (data) {
     if (Config.LogEvent) {
       console.log('[EVENT] User ' + data.user[0].name + ' started DJing.');
     }
-    
+
   }
 });
 
@@ -94,9 +94,9 @@ bot.on('rem_dj', function (data) {
 
 // Triggered when no song is playing (don't confuse it for in between songs)
 bot.on('nosong', function (data) {
-	if (data.room.metadata.djcount < 2) {
-		bot.addDj();
-	}
+  if (data.room.metadata.djcount < 2) {
+    bot.addDj();
+  }
 });
 
 // Triggered when a new song is played
@@ -107,7 +107,7 @@ bot.on('newsong', function (data) {
 // Triggered when a song ends
 bot.on('endsong', function (data) {
   // Displays the results of the song last played.
-  
+
   bot.speak('\"' + data.room.metadata.current_song.song + '\" - ' + data.room.metadata.current_song.artist + ' \(' + data.room.metadata.upvotes + ' :+1: ' + data.room.metadata.downvotes + ' :-1: ' + data.room.metadata.listeners + ' :speaker:\)');
 
   if (adjs.hasOwnProperty(data.room.metadata.current_dj)) {
@@ -124,10 +124,10 @@ bot.on('endsong', function (data) {
 
 // Triggered when someone votes
 bot.on('update_votes', function (data) {
-	if (Config.LogVote) {
-			console.log('[VOTE] User ID=' + data.userid + ' voted ' + data.
-	}
-});
+  if (Config.LogVote) {
+    console.log('[VOTE] User ID=' + data.userid + ' voted ' + data.
+    }
+  });
 
 // Triggered when someone sends a message
 bot.on('speak', function (data) {
@@ -142,7 +142,8 @@ bot.on('speak', function (data) {
     if (result) {
       var command = result[1].trim()
         .toLowerCase();
-      var param = '';
+      var param = '
+      ';
       if (result.length == 3 && result[2]) {
         param = result[2].trim()
           .toLowerCase();
@@ -151,158 +152,174 @@ bot.on('speak', function (data) {
 
       switch (command) {
         // Version - Returns the current version
-        case 'version':
-          bot.speak('Current Version: ' + Config.BotVersion);
+        case '
+      version ':
+          bot.speak('
+      Current Version: ' + Config.BotVersion);
           break;
 
           // Dive - Allows user to quit from the room chat.
-        case 'dive':
-        case 'stagedive':
+        case '
+      dive ':
+        case '
+      stagedive ':
           bot.remDj(data.userid);
           break;
 
           // Songlimit - Returns the max plays allowed
-        case 'songlimit':
+        case '
+      songlimit ':
           if (Config.hasLimit != false) {
-            bot.speak('The current song limit is ' + Config.PlayLimit + ' songs.');
+            bot.speak('
+      The current song limit is ' + Config.PlayLimit + '
+      songs.
+      ');
           } else {
-            bot.speak('There is currently no song limit.');
+            bot.speak('
+      There is currently no song limit.
+      ');
           }
           break;
 
           // Myplays - Returns the number of songs the user has played 
-        case 'myplays':
+        case '
+      myplays ':
           if (adjs.hasOwnProperty(data.userid)) {
-            bot.speak(data.name + ' has played ' + adjs[data.userid].plays + ' times.');
+            bot.speak(data.name + '
+      has played ' + adjs[data.userid].plays + '
+      times.
+      ');
           } else {
-            bot.speak('Silly ' + data.name + ', you aren\'t on stage!');
-          }
-          break;
+            bot.speak('
+      Silly ' + data.name + ', you aren\
+      't on stage!');
+    }
+    break;
 
-          // Help - Displays bot commands
-        case 'help':
-        case 'commands':
-          bot.speak('Commands: \/version, \/dive, \/stagedive, \/songlimit, \/myplays, \/help, \/commands');
-          break;
-      }
+    // Help - Displays bot commands
+    case 'help':
+    case 'commands':
+      bot.speak('Commands: \/version, \/dive, \/stagedive, \/songlimit, \/myplays, \/help, \/commands');
+      break;
+  }
 
-      /* The following commands below are for bot admin use only.
-       * If you want to include another person to use admin commands,
-       * replace the following line:
-       * 
-       * 		if (data.userid == Config.AdminId)
-       * 
-       * with this:
-       * 
-       * 		if (data.userid == Config.AdminId || data.userid == 'otherusersid')
-       * 
-       * and replace 'otherusersid' with the user id of the person you are
-       * giving rights to. You can include more than one person, too:
-       * 
-       * 		if (data.userid == Config.AdminId || data.userid == 'otherusersid1' || data.userid == 'otherusersid2')
-       * 
-       */
+  /* The following commands below are for bot admin use only.
+   * If you want to include another person to use admin commands,
+   * replace the following line:
+   * 
+   * 		if (data.userid == Config.AdminId)
+   * 
+   * with this:
+   * 
+   * 		if (data.userid == Config.AdminId || data.userid == 'otherusersid')
+   * 
+   * and replace 'otherusersid' with the user id of the person you are
+   * giving rights to. You can include more than one person, too:
+   * 
+   * 		if (data.userid == Config.AdminId || data.userid == 'otherusersid1' || data.userid == 'otherusersid2')
+   * 
+   */
 
-      if (data.userid == Config.AdminId) {
-        switch (command) {
-		  case 'avatar':
-			bot.setAvatar(ChangeAvatar(param));
-			break;
-          // Kick - Kicks a user (use the username, not the userid!)
-          case 'kick':
-          case 'boot':
-            var username = data.text.split('\/kick ');
-            bot.getUserId(username[1], function (u) {
-              bot.bootUser(u.userid);
-            });
-            break;
+  if (data.userid == Config.AdminId) {
+    switch (command) {
+      case 'avatar':
+        bot.setAvatar(ChangeAvatar(param));
+        break;
+        // Kick - Kicks a user (use the username, not the userid!)
+      case 'kick':
+      case 'boot':
+        var username = data.text.split('\/kick ');
+        bot.getUserId(username[1], function (u) {
+          bot.bootUser(u.userid);
+        });
+        break;
 
-            // GetID - Returns the userid of the given username
-          case 'getid':
-            var x = data.text.split('\/getid ');
-            bot.getUserId(x[1], function (u) {
-              bot.pm('Results for ' + x[1] + ':' + u.userid, data.userid);
-            });
-            break;
+        // GetID - Returns the userid of the given username
+      case 'getid':
+        var x = data.text.split('\/getid ');
+        bot.getUserId(x[1], function (u) {
+          bot.pm('Results for ' + x[1] + ':' + u.userid, data.userid);
+        });
+        break;
 
-            // Bop - Makes the bot thumbs up the current song
-          case 'bop':
-          case 'dance':
-            bot.vote('up');
-            break;
+        // Bop - Makes the bot thumbs up the current song
+      case 'bop':
+      case 'dance':
+        bot.vote('up');
+        break;
 
-            // Autobop - Toggles the autobop mode
-          case 'autobop':
-            if (Config.AutoBop == true) {
-              Config.AutoBop = false;
-            } else {
-              Config.AutoBop = true;
-            }
-            bot.speak('Autobop set to ' + Config.AutoBop);
-            break;
-
-            // Autosnag - Toggles the autosnag mode
-          case 'autosnag':
-            if (Config.AutoSnag == true) {
-              Config.AutoSnag = false;
-            } else {
-              Config.AutoSnag = true;
-            }
-            bot.speak('Autosnag set to ' + Config.AutoSnag);
-            break;
-
-            // Botparty - Makes the bot hop on the stage
-          case 'botparty':
-            bot.addDj();
-            break;
-
-            // Downboy - Removes the bot from the stage
-          case 'downboy':
-            bot.remDj();
-            break;
-
-            // Skip - Skips the bots song (not a user's song!)
-          case 'skip':
-            bot.stopSong();
-            break;
-
-            // Snag - Adds the current song to the bottom of the bot's queue
-          case 'snag':
-            bot.roomInfo(true, function (data) {
-              var newSong = data.room.metadata.current_song._id;
-              var newSongName = songName = data.room.metadata.current_song.metadata.song;
-              bot.playlistAll(function (playlist) {
-                bot.playlistAdd(newSong, playlist.list.length);
-              });
-              bot.snag();
-            });
-            break;
-
-            // Shuffle - Randomizes the bot's queue (it's good to do this once and a while)
-          case 'shuffle':
-          case 'reorder':
-            bot.playlistAll(function (playlist) {
-              console.log("Playlist length: " + playlist.list.length);
-              var i = 0;
-              var reorder = setInterval(function () {
-                if (i <= playlist.list.length) {
-                  var nextId = Math.ceil(Math.random() * playlist.list.length);
-                  bot.playlistReorder(i, nextId);
-                  console.log("Song " + i + " changed.");
-                  i++;
-                } else {
-                  clearInterval(reorder);
-                  console.log("Reorder Ended");
-                  bot.speak("Reorder completed.");
-                }
-              }, 1000);
-            });
-            break;
-
+        // Autobop - Toggles the autobop mode
+      case 'autobop':
+        if (Config.AutoBop == true) {
+          Config.AutoBop = false;
+        } else {
+          Config.AutoBop = true;
         }
-      }
+        bot.speak('Autobop set to ' + Config.AutoBop);
+        break;
+
+        // Autosnag - Toggles the autosnag mode
+      case 'autosnag':
+        if (Config.AutoSnag == true) {
+          Config.AutoSnag = false;
+        } else {
+          Config.AutoSnag = true;
+        }
+        bot.speak('Autosnag set to ' + Config.AutoSnag);
+        break;
+
+        // Botparty - Makes the bot hop on the stage
+      case 'botparty':
+        bot.addDj();
+        break;
+
+        // Downboy - Removes the bot from the stage
+      case 'downboy':
+        bot.remDj();
+        break;
+
+        // Skip - Skips the bots song (not a user's song!)
+      case 'skip':
+        bot.stopSong();
+        break;
+
+        // Snag - Adds the current song to the bottom of the bot's queue
+      case 'snag':
+        bot.roomInfo(true, function (data) {
+          var newSong = data.room.metadata.current_song._id;
+          var newSongName = songName = data.room.metadata.current_song.metadata.song;
+          bot.playlistAll(function (playlist) {
+            bot.playlistAdd(newSong, playlist.list.length);
+          });
+          bot.snag();
+        });
+        break;
+
+        // Shuffle - Randomizes the bot's queue (it's good to do this once and a while)
+      case 'shuffle':
+      case 'reorder':
+        bot.playlistAll(function (playlist) {
+          console.log("Playlist length: " + playlist.list.length);
+          var i = 0;
+          var reorder = setInterval(function () {
+            if (i <= playlist.list.length) {
+              var nextId = Math.ceil(Math.random() * playlist.list.length);
+              bot.playlistReorder(i, nextId);
+              console.log("Song " + i + " changed.");
+              i++;
+            } else {
+              clearInterval(reorder);
+              console.log("Reorder Ended");
+              bot.speak("Reorder completed.");
+            }
+          }, 1000);
+        });
+        break;
+
     }
   }
+}
+}
 });
 
 // Core Functions (do not modify unless you know what you're doing)
@@ -324,21 +341,21 @@ function RemoveActiveDJ(a) {
 
 function ChangeAvatar(avi) {
   switch (avi) {
-	 case 'ginger':
-		return 8;
-		break;
-	 case 'evil':
-		return 12;
-		break;
-	 case 'orange':
-		return 15;
-		break;
-	 case 'bluecat':
-		return 18;
-		break;
-	 case 'greencat':
-		return 19;
-		break;
+    case 'ginger':
+      return 8;
+      break;
+    case 'evil':
+      return 12;
+      break;
+    case 'orange':
+      return 15;
+      break;
+    case 'bluecat':
+      return 18;
+      break;
+    case 'greencat':
+      return 19;
+      break;
   }
 }
 
