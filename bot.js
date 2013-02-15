@@ -45,7 +45,7 @@ bot.on('ready', function (data) {
 bot.on('registered', function (data) {
   switch (data.user[0].userid) {
     case Config.BotId:
-      if (Config.DebugMode) {
+      if (Config.LogEvent) {
         console.log('Bot Connected.');
       }
       break;
@@ -62,6 +62,9 @@ bot.on('registered', function (data) {
 
     case '':
       bot.bootUser(data.user[0].userid, 'You are a banned user in this room. If you have any questions please PM room owner.');
+      if (Config.LogEvent) {
+		  console.log('[EVENT] ' + data.user[0].name + ' has been kicked \(banned user\).');
+	  }
       break;
     default:
       bot.speak('Welcome, \@' + data.user[0].name + '!');
@@ -71,8 +74,8 @@ bot.on('registered', function (data) {
 // Triggered when someone begins DJ'ing
 bot.on('add_dj', function (data) {
   if (data.success) {
-    if (Config.DebugMode) {
-      console.log('[INFO] User ' + data.user[0].name + ' started DJing.');
+    if (Config.LogEvent) {
+      console.log('[EVENT] User ' + data.user[0].name + ' started DJing.');
     }
     
   }
@@ -83,8 +86,8 @@ bot.on('rem_dj', function (data) {
   if (data.success) {
     // Removes DJ from active dj array
     RemoveActiveDJ(data.user[0].userid);
-    if (Config.DebugMode) {
-      console.log('[INFO] User ' + data.user[0].name + ' stopped DJing.');
+    if (Config.LogEvent) {
+      console.log('[EVENT] User ' + data.user[0].name + ' stopped DJing.');
     }
   }
 });
@@ -109,9 +112,7 @@ bot.on('endsong', function (data) {
 
   if (adjs.hasOwnProperty(data.room.metadata.current_dj)) {
     adjs[data.room.metadata.current_dj].plays++;
-    if (Config.DebugMode) {
-      console.log('[INFO] ' + data.room.metadata.current_dj + ' has played ' + adjs[data.room.metadata.current_dj].plays + ' times.');
-    }
+
     if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays = Config.PlayLimit) {
       bot.pm('@' + data.room.metadata.current_song.djname + ', you played your fair share. Please step down and let others spin.', data.room.metadata.current_dj);
     }
@@ -123,15 +124,17 @@ bot.on('endsong', function (data) {
 
 // Triggered when someone votes
 bot.on('update_votes', function (data) {
-
+	if (Config.LogVote) {
+			console.log('[VOTE] User ID=' + data.userid + ' voted ' + data.
+	}
 });
 
 // Triggered when someone sends a message
 bot.on('speak', function (data) {
   if (data) {
 
-    if (Config.DebugMode) {
-      console.log(data.name + ': ' + data.text);
+    if (Config.LogChat) {
+      console.log('[CHAT] data.name + ': ' + data.text);
     }
 
     // <-- Do not modify the code below --> //
