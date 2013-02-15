@@ -26,7 +26,6 @@ var Bot = require("ttapi"),
 bot.on('ready', function (data) {
   bot.modifyLaptop(Config.Laptop);
   AutoBopCheck();
-  AutoSnagCheck();
 
   // Adds DJs currently on stage to the Active DJs array
   bot.roomInfo(false, function (info) {
@@ -46,7 +45,7 @@ bot.on('ready', function (data) {
 bot.on('registered', function (data) {
   switch (data.user[0].userid) {
     case Config.BotId:
-      if (Config.DebugMode) {
+      if (Config.LogEvent) {
         console.log('Bot Connected.');
       }
       break;
@@ -63,6 +62,9 @@ bot.on('registered', function (data) {
 
     case '':
       bot.bootUser(data.user[0].userid, 'You are a banned user in this room. If you have any questions please PM room owner.');
+      if (Config.LogEvent) {
+		  console.log('[EVENT] ' + data.user[0].name + ' has been kicked \(banned user\).');
+	  }
       break;
     default:
       bot.speak('Welcome, \@' + data.user[0].name + '!');
@@ -72,9 +74,10 @@ bot.on('registered', function (data) {
 // Triggered when someone begins DJ'ing
 bot.on('add_dj', function (data) {
   if (data.success) {
-    if (Config.DebugMode) {
-      console.log('[INFO] User ' + data.user[0].name + ' started DJing.');
+    if (Config.LogEvent) {
+      console.log('[EVENT] User ' + data.user[0].name + ' started DJing.');
     }
+    
   }
 });
 
@@ -83,61 +86,55 @@ bot.on('rem_dj', function (data) {
   if (data.success) {
     // Removes DJ from active dj array
     RemoveActiveDJ(data.user[0].userid);
-    if (Config.DebugMode) {
-      console.log('[INFO] User ' + data.user[0].name + ' stopped DJing.');
+    if (Config.LogEvent) {
+      console.log('[EVENT] User ' + data.user[0].name + ' stopped DJing.');
     }
   }
 });
 
 // Triggered when no song is playing (don't confuse it for in between songs)
 bot.on('nosong', function (data) {
-  if (data.room.metadata.djcount < 2) {
-  	bot.addDj();
-  }
+	if (data.room.metadata.djcount < 2) {
+		bot.addDj();
+	}
 });
 
 // Triggered when a new song is played
 bot.on('newsong', function (data) {
   AutoBopCheck();
-  AutoSnagCheck();
-
 });
 
 // Triggered when a song ends
 bot.on('endsong', function (data) {
   // Displays the results of the song last played.
+  
+  bot.speak('\"' + data.room.metadata.current_song.song + '\" - ' + data.room.metadata.current_song.artist + ' \(' + data.room.metadata.upvotes + ' :+1: ' + data.room.metadata.downvotes + ' :-1: ' + data.room.metadata.listeners + ' :speaker:\)');
 
-  if (data.room.metadata.current_song.metadata.album) {
-    bot.speak(':loudspeaker: Last Played: \"' + data.room.metadata.current_song.metadata.song +
-      '\" by ' + data.room.metadata.current_song.metadata.artist +
-      ' \(Album: ' + data.room.metadata.current_song.metadata.album +
-      '\), which received ' + data.room.metadata.upvotes + ' upvotes and ' + data.room.metadata.downvotes + ' downvotes.');
-  } else {
-    bot.speak(':loudspeaker: Last Played: \"' + data.room.metadata.current_song.metadata.song +
-      '\" by ' + data.room.metadata.current_song.metadata.artist + ', which received ' + data.room.metadata.upvotes + ' upvotes and ' + data.room.metadata.downvotes + ' downvotes.');
-  }
   if (adjs.hasOwnProperty(data.room.metadata.current_dj)) {
     adjs[data.room.metadata.current_dj].plays++;
-    if (Config.DebugMode) {
-      console.log('[INFO] ' + data.room.metadata.current_dj + ' has played ' + adjs[data.room.metadata.current_dj].plays + ' times.');
+
+    if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays = Config.PlayLimit) {
+      bot.pm('@' + data.room.metadata.current_song.djname + ', you played your fair share. Please step down and let others spin.', data.room.metadata.current_dj);
     }
-    if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays >= Config.PlayLimit) {
-      bot.speak(data.room.metadata.current_song.djname + ', you played your fair share. Please step down and let others spin.');
+    if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays > Config.PlayLimit) {
+      bot.escort(data.room.metadata.userid);
     }
   }
 });
 
 // Triggered when someone votes
 bot.on('update_votes', function (data) {
-
+	if (Config.LogVote) {
+			console.log('[VOTE] User ID=' + data.userid + ' voted ' + data.
+	}
 });
 
 // Triggered when someone sends a message
 bot.on('speak', function (data) {
   if (data) {
 
-    if (Config.DebugMode) {
-      console.log(data.name + ': ' + data.text);
+    if (Config.LogChat) {
+      console.log('[CHAT] data.name + ': ' + data.text);
     }
 
     // <-- Do not modify the code below --> //
@@ -208,6 +205,9 @@ bot.on('speak', function (data) {
 
       if (data.userid == Config.AdminId) {
         switch (command) {
+		  case 'avatar':
+			bot.setAvatar(ChangeAvatar(param));
+			break;
           // Kick - Kicks a user (use the username, not the userid!)
           case 'kick':
           case 'boot':
@@ -221,7 +221,7 @@ bot.on('speak', function (data) {
           case 'getid':
             var x = data.text.split('\/getid ');
             bot.getUserId(x[1], function (u) {
-              bot.speak(x[1] + ':' + u.userid);
+              bot.pm('Results for ' + x[1] + ':' + u.userid, data.userid);
             });
             break;
 
@@ -319,6 +319,26 @@ function AddActiveDJ(a) {
 function RemoveActiveDJ(a) {
   if (adjs && a && adjs.hasOwnProperty(a)) {
     adjs[a].removed = new Date()
+  }
+}
+
+function ChangeAvatar(avi) {
+  switch (avi) {
+	 case 'ginger':
+		return 8;
+		break;
+	 case 'evil':
+		return 12;
+		break;
+	 case 'orange':
+		return 15;
+		break;
+	 case 'bluecat':
+		return 18;
+		break;
+	 case 'greencat':
+		return 19;
+		break;
   }
 }
 
