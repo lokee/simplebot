@@ -113,7 +113,7 @@ bot.on('endsong', function (data) {
       console.log('[INFO] ' + data.room.metadata.current_dj + ' has played ' + adjs[data.room.metadata.current_dj].plays + ' times.');
     }
     if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays = Config.PlayLimit) {
-      bot.speak('@' + data.room.metadata.current_song.djname + ', you played your fair share. Please step down and let others spin.');
+      bot.pm('@' + data.room.metadata.current_song.djname + ', you played your fair share. Please step down and let others spin.', data.room.metadata.current_dj);
     }
     if (Config.hasLimit != false && adjs[data.room.metadata.current_dj].plays > Config.PlayLimit) {
       bot.escort(data.room.metadata.userid);
@@ -202,6 +202,9 @@ bot.on('speak', function (data) {
 
       if (data.userid == Config.AdminId) {
         switch (command) {
+		  case 'avatar':
+			bot.setAvatar(ChangeAvatar(param));
+			break;
           // Kick - Kicks a user (use the username, not the userid!)
           case 'kick':
           case 'boot':
@@ -215,7 +218,7 @@ bot.on('speak', function (data) {
           case 'getid':
             var x = data.text.split('\/getid ');
             bot.getUserId(x[1], function (u) {
-              bot.speak(x[1] + ':' + u.userid);
+              bot.pm('Results for ' + x[1] + ':' + u.userid, data.userid);
             });
             break;
 
@@ -313,6 +316,26 @@ function AddActiveDJ(a) {
 function RemoveActiveDJ(a) {
   if (adjs && a && adjs.hasOwnProperty(a)) {
     adjs[a].removed = new Date()
+  }
+}
+
+function ChangeAvatar(avi) {
+  switch (avi) {
+	 case 'ginger':
+		return 8;
+		break;
+	 case 'evil':
+		return 12;
+		break;
+	 case 'orange':
+		return 15;
+		break;
+	 case 'bluecat':
+		return 18;
+		break;
+	 case 'greencat':
+		return 19;
+		break;
   }
 }
 
