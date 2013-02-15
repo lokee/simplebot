@@ -26,6 +26,7 @@ var Bot = require("ttapi"),
 bot.on('ready', function (data) {
   bot.modifyLaptop(Config.Laptop);
   AutoBopCheck();
+  AutoSnagCheck();
 
   // Adds DJs currently on stage to the Active DJs array
   bot.roomInfo(false, function (info) {
@@ -90,12 +91,16 @@ bot.on('rem_dj', function (data) {
 
 // Triggered when no song is playing (don't confuse it for in between songs)
 bot.on('nosong', function (data) {
-
+  if (data.room.metadata.djcount < 2) {
+  	bot.addDj();
+  }
 });
 
 // Triggered when a new song is played
 bot.on('newsong', function (data) {
   AutoBopCheck();
+  AutoSnagCheck();
+
 });
 
 // Triggered when a song ends
